@@ -1,4 +1,4 @@
-package com.snaplink.reository;
+package com.snaplink.repository;
 
 import java.util.List;
 

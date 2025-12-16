@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.snaplink.models.User;
-import com.snaplink.reository.UserRepository;
+import com.snaplink.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 

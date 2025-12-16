@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.Comments;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

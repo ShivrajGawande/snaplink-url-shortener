@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.snaplink.dto.LoginRequest;
 import com.snaplink.models.User;
-import com.snaplink.reository.UserRepository;
+import com.snaplink.repository.UserRepository;
 import com.snaplink.security.jwt.JwtAuthenticationResponce;
 import com.snaplink.security.jwt.JwtUtils;
 
