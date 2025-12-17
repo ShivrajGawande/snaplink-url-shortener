@@ -1,5 +1,7 @@
 package com.snaplink.service;
 
+
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -99,6 +101,22 @@ public class UrlMappingService {
 		
 		return clickEvents.stream()
 				.collect(Collectors.groupingBy(click -> click.getClickDate().toLocalDate(),Collectors.counting()));
+	}
+
+	public UrlMapping getOriginalUrl(String shortUrl) {
+		
+		UrlMapping urlMapping =  urlMappingRepository.findByShortUrl(shortUrl);
+		if(urlMapping != null) {
+			urlMapping.setClickCount(urlMapping.getClickCount()+1);
+			urlMappingRepository.save(urlMapping);
+			
+			ClickEvent clickEvent = new ClickEvent();
+			clickEvent.setClickDate(LocalDateTime.now());
+			clickEvent.setUrlMapping(urlMapping);
+			clickEventRepository.save(clickEvent);
+		}
+		return urlMapping;
+		
 	}
 
 }

@@ -1,22 +1,15 @@
 HELP.md
 
-# ===============================
-# Maven / Build Output
-# ===============================
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# ===============================
-# Spring Boot Secrets (IMPORTANT)
-# ===============================
+
 src/main/resources/application.properties
 .env
 
-# ===============================
-# STS / Eclipse
-# ===============================
+
 .apt_generated
 .classpath
 .factorypath
@@ -26,17 +19,7 @@ src/main/resources/application.properties
 .sts4-cache
 Servers/
 
-# ===============================
-# IntelliJ IDEA
-# ===============================
-.idea
-*.iws
-*.iml
-*.ipr
 
-# ===============================
-# NetBeans
-# ===============================
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -46,13 +29,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# ===============================
-# Logs
-# ===============================
+
 *.log
 
-# ===============================
-# OS Files
-# ===============================
+
 .DS_Store
 Thumbs.db

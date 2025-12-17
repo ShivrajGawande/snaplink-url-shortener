@@ -1,5 +1,6 @@
 package com.snaplink.models;
 
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
