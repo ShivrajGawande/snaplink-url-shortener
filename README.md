@@ -1,10 +1,9 @@
-
-# 🚀 SnapLink – URL Shortener Backend (Spring Boot)
+# 🚀 SnapLink – URL Shortener Backend
 
 SnapLink is a **secure, backend-only URL Shortener application** built using **Spring Boot**.
-It allows users to **register, authenticate, shorten URLs, redirect short links**, and **track click analytics** with date-wise statistics.
+It enables users to **register, authenticate, shorten URLs**, perform **public redirection**, and view **detailed click analytics**.
 
-This project focuses purely on **backend engineering**, security, and clean API design — no frontend included.
+This project focuses on **real-world backend engineering**, security, and clean REST API design.
 
 ---
 
@@ -12,7 +11,7 @@ This project focuses purely on **backend engineering**, security, and clean API 
 
 * **Java:** 17
 * **Spring Boot:** 3.5.x
-* **Spring Security (JWT Authentication)**
+* **Spring Security + JWT Authentication**
 * **Spring Data JPA**
 * **Database:** MySQL
 * **Build Tool:** Maven
@@ -23,51 +22,89 @@ This project focuses purely on **backend engineering**, security, and clean API 
 ## ✨ Features
 
 * User registration & login
-* JWT-based authentication
-* Secure URL shortening
+* JWT-based authentication (token-only login response)
+* Secure URL shortening (authenticated users)
 * Public short URL redirection
 * Click tracking per URL
 * Date-wise analytics
 * User-specific URL management
 * Role-based authorization (`ROLE_USER`)
+* WAR deployment support
 
 ---
 
 ## 🏗 Project Structure
 
-```
+```text
 com.snaplink
  ├── controller
- │    ├── AuthController
- │    ├── UrlMappingController
- │    └── RedirectController
+ │    ├── AuthController.java
+ │    ├── RedirectController.java
+ │    └── UrlMappingController.java
+ │
  ├── dto
- │    ├── LoginRequest
- │    ├── RegisterRequest
- │    ├── UrlMappingDto
- │    └── ClickEventDto
+ │    ├── LoginRequest.java
+ │    ├── RegisterRequest.java
+ │    ├── UrlMappingDto.java
+ │    └── ClickEventDto.java
+ │
  ├── models
- │    ├── User
- │    └── UrlMapping
+ │    ├── User.java
+ │    ├── UrlMapping.java
+ │    └── ClickEvent.java
+ │
+ ├── repository
+ │    ├── UserRepository.java
+ │    ├── UrlMappingRepository.java
+ │    └── ClickEventRepository.java
+ │
+ ├── security
+ │    ├── WebSecurityConfig.java
+ │
+ ├── security.jwt
+ │    ├── JwtAuthenticationFilter.java
+ │    ├── JwtAuthenticationResponse.java
+ │    └── JwtUtils.java
+ │
  ├── service
- │    ├── UserService
- │    └── UrlMappingService
+ │    ├── UserService.java
+ │    ├── UserDetailsServiceImpl.java
+ │    ├── UserDetailsImpl.java
+ │    └── UrlMappingService.java
+ │
+ ├── ServletInitializer.java
  └── SnapLinkUrlShortnerApplication.java
 ```
-Good catch 👍
-Yes — since **`application.properties` is not present in the repo**, we should **explicitly mention this in the README** so anyone cloning it knows what to do.
 
-Below is a **small, clean section** you should **add to your README** (recommended place: under **“Running the Application”**).
+---
 
-You can paste this **exactly as-is**.
+## ▶️ Running the Application
+
+### Prerequisites
+
+* Java 17
+* MySQL
+* IDE (IntelliJ / Eclipse)
+
+### Steps
+
+1. Clone the repository
+2. Create database configuration (see below)
+3. Run the application from IDE:
+
+```java
+SnapLinkUrlShortnerApplication.java
+```
+
+📌 **Run Mode:** From IDE
 
 ---
 
 ## ⚙️ Database Configuration (Important)
 
-This project does **not** include `application.properties` in the repository.
+`application.properties` is **not included** in the repository.
 
-After cloning the project, **create the file manually**:
+After cloning, create:
 
 ```
 src/main/resources/application.properties
@@ -83,56 +120,21 @@ spring.datasource.password=YOUR_DB_PASSWORD
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-
 spring.jpa.properties.hibernate.format_sql=true
 ```
 
-📌 **Notes**
-
-* Create a MySQL database named `snaplink`
-* Update username & password as per your local setup
-* Tables will be auto-created on application startup
+Create a MySQL database named **snaplink** before running the app.
 
 ---
 
 ## 🔐 JWT Configuration
 
-Add the following JWT properties to `application.properties`:
+Add JWT properties to `application.properties`:
 
 ```properties
 jwt.secret=your_secret_key_here
 jwt.expiration=86400000
 ```
-
----
-
-## 🧠 Why This Is a Good Practice
-
-* Keeps **credentials out of version control**
-* Prevents accidental leaks
-* Follows **industry-standard security practices**
-
----
-
-## ▶️ Running the Application
-
-### Prerequisites
-
-* Java 17 installed
-* MySQL running
-* IDE (IntelliJ / Eclipse)
-
-### Steps
-
-1. Clone the repository
-2. Configure MySQL in `application.properties`
-3. Run the application from IDE using:
-
-```java
-SnapLinkUrlShortnerApplication.java
-```
-
-📌 **Run mode:** From IDE
 
 ---
 
@@ -142,7 +144,7 @@ SnapLinkUrlShortnerApplication.java
 
 **POST** `/api/auth/public/register`
 
-**Request Body**
+**Request**
 
 ```json
 {
@@ -164,7 +166,7 @@ User Registred Successfully
 
 **POST** `/api/auth/public/login`
 
-**Request Body**
+**Request**
 
 ```json
 {
@@ -179,7 +181,7 @@ User Registred Successfully
 "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGl2cmFqXyIsImlhdCI6MT..."
 ```
 
-📌 Use this token for secured APIs:
+Use the token in headers:
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
@@ -197,7 +199,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 **POST** `/api/urls/shorten`
 
-**Request Body**
+**Request**
 
 ```json
 {
@@ -247,19 +249,15 @@ Authorization: Bearer <JWT_TOKEN>
 ]
 ```
 
-📌 Returns URLs **created by the logged-in user only**
-
 ---
 
 ## 📊 Analytics APIs
-
----
 
 ### 5️⃣ URL Click Analytics
 
 **GET** `/api/urls/analytics/{shortUrl}`
 
-**Query Parameters**
+**Query Params**
 
 ```
 startDate=2025-12-01T00:00:00
@@ -287,7 +285,7 @@ endDate=2025-12-31T23:59:59
 
 **GET** `/api/urls/totalClicks`
 
-**Query Parameters**
+**Query Params**
 
 ```
 startDate=2025-12-01
@@ -312,68 +310,32 @@ endDate=2025-12-31
 
 **GET** `/{shortUrl}`
 
-**Behavior**
-
 * Redirects to original URL
-* HTTP Status: **302 FOUND**
+* HTTP **302 FOUND**
 * Increments click count
-* Returns **404** if short URL does not exist
+* Returns **404** if not found
 
 ---
 
-## 📦 DTO Reference
+## 🔐 Security Architecture
 
-### LoginRequest
-
-```java
-public class LoginRequest {
-    private String username;
-    private String password;
-}
-```
-
-### UrlMappingDto
-
-```java
-public class UrlMappingDto {
-    private Long id;
-    private String originalUrl;
-    private String shortUrl;
-    private int clickCount;
-    private LocalDateTime createdDate;
-    private String username;
-}
-```
-
-### ClickEventDto
-
-```java
-public class ClickEventDto {
-    private LocalDate clickDate;
-    private Long count;
-}
-```
+* JWT-based stateless authentication
+* Custom JWT filter validates token on every request
+* Role-based access using `@PreAuthorize`
+* User details loaded via `UserDetailsServiceImpl`
 
 ---
 
-## 🔒 Security
+## 🌐 Deployment Support
 
-* JWT-based authentication
-* Role-based authorization
-* Public endpoints:
+* Supports **WAR deployment**
+* Deployable on external servlet containers (Tomcat, etc.)
+* Enabled using `ServletInitializer`
 
-  * `/api/auth/public/**`
-  * `/{shortUrl}`
-* Protected endpoints:
-
-  * `/api/urls/**`
 ---
 
 ## 👨‍💻 Author
 
 **Shivraj Gawande**
 Backend Developer | Spring Boot
-📌 URL Shortener Backend Project
-
----
 
